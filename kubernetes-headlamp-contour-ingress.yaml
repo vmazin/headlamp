@@ -1,0 +1,29 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: headlamp
+  namespace: headlamp
+  annotations:
+    # Contour-specific annotations
+    projectcontour.io/response-timeout: "60s"
+    projectcontour.io/websocket-routes: "/"
+    # Optional: Enable TLS with cert-manager
+    # cert-manager.io/cluster-issuer: "letsencrypt-production"
+spec:
+  ingressClassName: contour
+  rules:
+  - host: headlamp.flot.local  # Replace with your actual domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: headlamp
+            port:
+              number: 80  
+  tls:
+    - secretName: headlamp-tls
+      hosts:
+      - headlamp.flot.local
